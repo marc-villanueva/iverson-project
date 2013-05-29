@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+	<script type="text/javascript">
+
+	// http://programmingpraxis.com/2013/05/03/pairing-students/
+
+	//var students = ["Anne", "Beth", "Chet", "Dirk", "Izzy", "Ethan"];
+  var students = [1,2,3,4,5,6];
+	var pairs = [];
+
+	//-----------------------
+	//	Unique pairings
+	//-----------------------
+	// var iterations = students.length - 1;
+
+	// for(var i = 0; i <= iterations; i++) {
+	// 	var student = students.shift();
+	// 	$(students).map(function() {
+	// 		pairs.push([student, this]);
+	// 	})
+	// }
+
+	// console.log(pairs);
+
+
+	//-----------------------
+	// Unique sets of pairings
+	//-----------------------
+	function collectPairs(a) {
+		var set = [];
+
+    var mid = a.length / 2;
+
+    for(var i = 0; i < mid; i++) {
+      set.push(a[i] + "," + a[i+mid]);
+    }
+
+		return set;
+	}
+
+	function rotate(a) {
+    var mid = a.length / 2;
+
+    var last = a.splice(a.length - 1, 1);
+    a.splice(mid, 0, last[0]);
+
+    var second = a.splice(1,1);
+    a.splice(mid, 0, second[0]);
+	}
+
+	var numPairs = students.length - 1;
+
+	for(var i = 0; i < numPairs; i++) {
+	 pairs.push(collectPairs(students));
+	 rotate(students);
+	}
+
+  $(pairs).each(function() {
+    $(this).each(function() {
+      document.write(this);
+      document.write(" | ");
+    })
+    document.write("<br/>");
+  })
+	</script>
+</head>
+<body>
+
+</body>
+</html>

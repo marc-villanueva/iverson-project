@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+    <style>
+    body {
+      background-color: gray;
+      font-size: x-small;
+    }
+
+    .white {
+      background-color: white;
+      color: black;
+    }
+
+    .black {
+      background-color: black;
+      color: white;
+    }
+
+    div {
+      display: table;
+    }
+
+    table, div {
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    td {
+      height: 15px;
+      width: 15px;
+      vertical-align: middle;
+      text-align: center;
+    }
+  </style>
+
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+
+    // lands on a white square, turns right and square turns black
+    // lands on a black square, turns left and square turns white
+
+    //---------------------------
+    //  Direction
+    //---------------------------
+    var Direction = {
+      NORTH: 1,
+      EAST: 2,
+      SOUTH: 3,
+      WEST: 4
+    }
+
+    //---------------------------
+    //  Ant
+    //---------------------------
+    function Ant(plane) {
+      this.plane = plane;
+      this.currentCell = this.plane.center();
+      this.direction = Direction.NORTH;
+      this.observers = [];
+    }
+
+    Ant.prototype = {
+      addObserver: function(o) {
+        this.observers.push(o);
+      },
+      notify: function(from, to) {
+        $(this.observers).each(function() {
+          this.update(from, to);
+        })
+      },
+      move: function() {
+        if(this.currentCell.isWhite()) {
+          this.direction = this.direction == Direction.WEST ? Direction.NORTH : this.direction + 1;
+        } else {
+          this.direction = this.direction == Direction.NORTH ? Direction.WEST : this.direction - 1;
+        }
+
+        var from = this.currentCell;
+
+        this.currentCell.switchColor();
+        this.advance();
+
+        var to = this.currentCell;
+
+        this.notify(from, to);
+      },
+      advance: function() {
+        var x,y;
+
+        switch(this.direction) {
+          case(Direction.NORTH):
+            x = this.currentCell.x;
+            y = this.currentCell.y - 1;
+            break;
+          case(Direction.EAST):
+            x = this.currentCell.x + 1;
+            y = this.currentCell.y;
+            break;
+          case(Direction.SOUTH):
+            x = this.currentCell.x;
+            y = this.currentCell.y + 1;
+            break;
+          case(Direction.WEST):
+            x = this.currentCell.x - 1;
+            y = this.currentCell.y;
+            break;
+        }
+
+        this.currentCell = this.plane.cellAt(x, y);
+      }
+    }
+
+    //---------------------------
+    //  Plane
+    //---------------------------
+    function Plane(width, height) {
+      this.width = width;
+      this.height = height;
+      this.cells = new Array(width);
+
+      for(var x = 0; x < width; x++) {
+
+        this.cells[x] = new Array(height);
+
+        for(var y = 0; y < height; y++) {
+          this.cells[x][y] = new Cell("white", x, y);
+        }
+      }
+    }
+    Plane.prototype = {
+      center: function() {
+        var x = Math.floor(this.width / 2);
+        var y = Math.floor(this.height / 2);
+        return this.cells[x-1][y-1];
+      },
+      cellAt: function(x,y) {
+
+        // check if we're out of bounds
+        // if so, wrap cell around to the other side
+        if(x >= this.width) {
+          x = 0;
+        }
+        if(x < 0) {
+          x = this.width - 1;
+        }
+        if(y >= this.height) {
+          y = 0;
+        }
+        if(y < 0) {
+          y = this.height - 1;
+        }
+
+        return this.cells[x][y];
+      }
+    }
+
+    //---------------------------
+    //  Cell
+    //---------------------------
+    function Cell(color, x, y) {
+      this.color = color;
+      this.x = x;
+      this.y = y;
+    }
+
+    Cell.prototype = {
+      switchColor: function() {
+        this.color = this.color == "white" ? "black" : "white";
+      },
+      isWhite: function() {
+        return this.color == "white";
+      }
+    }
+
+    //---------------------------
+    //  PlaneView
+    //---------------------------
+    function PlaneView(plane) {
+      this.plane = plane;
+    }
+
+    PlaneView.prototype = {
+      delete: function() {
+        $('table').remove();
+      },
+      draw: function() {
+        var html = "<table border=\"1\">";
+        for(var y = 0; y < this.plane.height; y++) {
+          html += "<tr>";
+          for(var x = 0; x < this.plane.width; x++) {
+            html += "<td class=\"white\"></td>";
+          }
+          html += "</tr>";
+        }
+
+        html += "</table>";
+        $("body").append(html);
+      },
+      toggleCell: function(cell) {
+        this.getCell(cell.x, cell.y).toggleClass('white black');
+      },
+      showAnt: function(cell) {
+        this.getCell(cell.x, cell.y).text('x');
+      },
+      hideAnt: function(cell) {
+        this.getCell(cell.x, cell.y).text('');
+      },
+      getCell: function(x, y) {
+        return $("table tr:nth-child(" + (y + 1) + ") td:nth-child(" + (x + 1) + ")");
+      }
+    }
+
+    //---------------------------
+    //  ControlForm
+    //---------------------------
+    function ControlForm() {
+      var resetElem = $('#reset');
+      var startElem = $('#start');
+      var stopElem = $('#stop');
+      var widthElem = $('#width');
+      var heightElem = $('#height');
+      var delayElem = $('#delay');
+      var stepElem = $('#step');
+      var self = this;
+
+      this.width = function() {
+        return widthElem.val();
+      }
+
+      this.height = function() {
+        return heightElem.val();
+      }
+
+      this.delay = function() {
+        return delayElem.val();
+      }
+
+      this.step = function(val) {
+        if(typeof val != "undefined") {
+          stepElem.val(val);
+        } else {
+          return stepElem.val();
+        }
+      }
+
+      this.onReset = null;
+      this.onStart = null;
+      this.onStop = null;
+
+      resetElem.on('click', function() {
+        if(typeof self.onReset != "undefined") {
+          self.onReset();
+        }
+      })
+
+      startElem.on('click', function() {
+        if(typeof self.onStart != "undefined") {
+          self.onStart();
+        }
+      })
+
+      stopElem.on('click', function() {
+        if(typeof self.onStop != "undefined") {
+          self.onStop();
+        }
+      })
+    }
+
+    //---------------------------
+    //  Controller
+    //---------------------------
+    function Controller(form) {
+      var timer, ant, plane, planeView, delay = null;
+      var self = this;
+      this.form = form;
+
+      function init() {
+        if(timer) {
+          stop();
+        }
+        if(planeView) {
+          planeView.delete();
+        }
+
+        self.form.step(0);
+        ant = null;
+        plane = new Plane(form.width(), form.height());
+        planeView = new PlaneView(plane);
+        planeView.draw();
+        delay = form.delay();
+      }
+
+      function start() {
+        if(!ant) {
+          ant = new Ant(plane);
+          ant.addObserver(self);
+        }
+
+        timer = setInterval(function() {
+          ant.move();
+        }, delay);
+      }
+
+      function stop() {
+        clearInterval(timer);
+      }
+
+      function incrementCounter() {
+        var counter = parseInt(self.form.step());
+        self.form.step(++counter);
+      }
+
+      this.form.onReset = function() {
+        init();
+      }
+
+      this.form.onStart = function() {
+        start();
+      }
+
+      this.form.onStop = function() {
+        stop();
+      }
+
+      this.init = function() {
+        init();
+      }
+
+      this.update = function(fromCell, toCell) {
+        planeView.toggleCell(fromCell);
+        planeView.hideAnt(fromCell);
+        planeView.showAnt(toCell);
+        incrementCounter();
+      }
+    }
+
+    $(function() {
+      var form = new ControlForm();
+      var controller = new Controller(form);
+      controller.init();
+    })
+
+  </script>
+</head>
+<body>
+  <div>
+    <button type="button" id="reset">Reset</button>
+    <button type="button" id="start">Start</button>
+    <button type="button" id="stop">Stop</button>
+    width: <input type="text" id="width" value="50" />
+    height: <input type="text" id="height" value="50" />
+    dealy: <input type="text" id="delay" value="100"/>
+    step: <input type="text" id="step" value="0" />
+  </div>
+</body>
+</html>
