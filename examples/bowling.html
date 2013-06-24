@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+
+  //-----------------------
+  // Represents a single frame
+  // in a bowling game
+  //-----------------------
+  function Frame(throws) {
+    this.throws = throws;
+    this.frameIndex = null;
+  }
+
+  Frame.prototype = {
+    isTenthFrame: function() {
+      return this.frameIndex == 10;
+    },
+    isAStrike: function() {
+      return this.throws[0] == 'X';
+    },
+    isASpare: function() {
+      return this.throws[1] == '/';
+    },
+    totalPins: function() {
+      var total = 0;
+      if(this.isTenthFrame()) {
+        for(var i = 0; i < this.throws.length; i++) {
+          if(this.throws[i] == 'X') {
+            total += 10;
+          } else if(this.throws[i] == '/') {
+            total += 10 - this.throws[i - 1];
+          } else {
+            total += this.throws[i];
+          }
+        }
+      } else if(this.isASpare() || this.isAStrike()) {
+        total = 10;
+      } else {
+        total = this.throws[0] + this.throws[1];
+      }
+      return total;
+    },
+    totalThrows: function() {
+      return this.throws.length;
+    },
+    pinsPerThrow: function(throwIndex) {
+      var pins = this.throws[throwIndex];
+      if(pins == 'X') {
+        pins = 10;
+      } else if(pins == '/') {
+        pins = 10 - this.throws[throwIndex - 1];
+      }
+
+      return pins;
+    }
+  }
+
+  //-----------------------
+  // The Bowling Game
+  //-----------------------
+  function Game() {
+    this.frames = [];
+  }
+
+  Game.prototype = {
+    addFrame: function(frame) {
+      frame.frameIndex = this.frames.length + 1;
+      this.frames.push(frame);
+    },
+    nextFrameAfter: function(frame) {
+      var index = this.frames.indexOf(frame);
+      var next = null;
+
+      if(this.frames.length >= index + 1) {
+        next = this.frames[index + 1];
+      }
+
+      return next;
+    },
+    calculateScore: function() {
+      var totalScore = 0;
+
+      for(var i = 0; i < this.frames.length; i++) {
+        var f = this.frames[i];
+        if(this.shouldScore(f)) {
+          totalScore += f.totalPins();
+
+          if(f.isTenthFrame()) {
+            break;
+          } else if(f.isASpare()) {
+            totalScore += this.addThrows(f, 1);
+          } else if(f.isAStrike()) {
+            totalScore += this.addThrows(f, 2);
+          }
+        }
+      }
+
+      return totalScore;
+    },
+    shouldScore: function(frame) {
+      var shouldScore = false;
+      if(frame.isTenthFrame()) {
+        shouldScore = true;
+      } else if(frame.isAStrike()) {
+        var next = this.nextFrameAfter(frame);
+        if(next) {
+          if(next.isTenthFrame()) {
+            shouldScore = true;
+          } else if(next.totalThrows() >= 2) {
+            shouldScore = true;
+          } else {
+            next = this.nextFrameAfter(next);
+            if(next) {
+              shouldScore = true;
+            }
+          }
+        }
+      } else if(frame.isASpare()) {
+        shouldScore = this.nextFrameAfter(frame) != null;
+      } else {
+        shouldScore = true;
+      }
+
+      return shouldScore;
+    },
+    addThrows: function(frame, numberOfThrows) {
+      var f = frame;
+      var score = 0;
+
+      if(f.isTenthFrame()) {
+        var temp = new Frame(f.throws.slice(1,numberOfThrows + 1));
+        temp.frameIndex = 10;
+        score = temp.totalPins();
+      } else {
+        while(numberOfThrows > 0) {
+          f = this.nextFrameAfter(f);
+          if(!f) {
+            return 0;
+          }
+
+          if(f.isTenthFrame()) {
+            for(var i = 0; i < numberOfThrows; i++) {
+              score += f.pinsPerThrow(i);
+            }
+            numberOfThrows = 0;
+          } else if(f.isAStrike()) {
+            score += 10;
+            numberOfThrows--;
+          } else {
+            if(numberOfThrows == 1) {
+              score += f.throws[0];
+              numberOfThrows--;
+            } else {
+              score += f.totalPins();
+              numberOfThrows = numberOfThrows - 2;
+            }
+          }
+        }
+      }
+      return score;
+    }
+  }
+
+  //-----------------------
+
+  var game = new Game();
+  game.addFrame(new Frame(['X']));  // 30
+  game.addFrame(new Frame(['X']));  // 60
+  game.addFrame(new Frame(['X']));  // 90
+  game.addFrame(new Frame(['X']));  // 120
+  game.addFrame(new Frame(['X']));  // 150
+  game.addFrame(new Frame(['X']));  // 180
+  game.addFrame(new Frame(['X']));  // 210
+  game.addFrame(new Frame(['X']));  // 240
+  game.addFrame(new Frame(['X']));  // 270
+  game.addFrame(new Frame(['X','X','X']));  // 300
+  console.log(game.calculateScore() == 300);
+
+  game = new Game();
+  game.addFrame(new Frame([2,7]));               // 9
+  game.addFrame(new Frame([2,'/']));            // 29
+  game.addFrame(new Frame(['X']));              // 48
+  game.addFrame(new Frame([2,7]));              // 57
+  game.addFrame(new Frame(['X']));              // 87
+  game.addFrame(new Frame(['X']));              // 111
+  game.addFrame(new Frame(['X']));              // 127
+  game.addFrame(new Frame([4,2]));              // 133
+  game.addFrame(new Frame(['X']));              // 153
+  game.addFrame(new Frame([4, '/', 'X']));      // 173
+  console.log(game.calculateScore() == 173);
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+
+  //----------------------------
+  // Represents one of the three
+  // pegs that holds the disks
+  //----------------------------
+  function Peg(label) {
+    this.label = label;
+    this.disks = [];
+  }
+
+  Peg.prototype = {
+    addDisk: function(disk) {
+      if(this.isValidMove(disk)) {
+        this.disks.push(disk);
+      }
+    },
+    removeDisk: function() {
+      if(this.disks.length > 0) {
+        return this.disks.pop();
+      }
+    },
+    isValidMove: function(disk) {
+      var valid = true;
+
+      if(this.disks.length > 0) {
+        if(disk.isSmallerThan(this.topDisk())) {
+          valid = true;
+        }
+      }
+
+      return valid;
+    },
+    topDisk: function() {
+      return this.disks[this.disks.length - 1];
+    },
+    totalDisks: function() {
+      return this.disks.length;
+    }
+  }
+
+  //----------------------------
+  // Represents one of the game
+  // pieces that can be moved from
+  // peg to peg. They come in different
+  // sizes as represented by the size
+  // which should be an integer starting
+  // from 0.
+  //----------------------------
+  function Disk(size) {
+    this.size = size;
+  }
+
+  Disk.prototype = {
+    size: function() {
+      return this.size;
+    },
+    isSmallerThan: function(disk) {
+      return this.size < disk.size;
+    }
+  }
+
+  //----------------------------
+  // The game
+  //----------------------------
+  function TowerOfHanoi(numberOfDisks) {
+    this.pegs = [new Peg('A'), new Peg('B'), new Peg('C')];
+    this.numberOfDisks = numberOfDisks;
+
+    for(var i=0; i < this.numberOfDisks; i++) {
+      this.pegs[0].addDisk(new Disk(i));
+    }
+
+    this.numberOfMoves = 0;
+  }
+
+  TowerOfHanoi.prototype = {
+    solve: function() {
+      if(this.numberOfDisks == 1) {
+        this.move(this.pegs[0], this.pegs[2]);
+      } else {
+
+      }
+
+      return this.numberOfMoves;
+    },
+    move: function(from, to) {
+      var disk = from.removeDisk();
+      to.addDisk(disk);
+      this.numberOfMoves++;
+    }
+
+  }
+
+  //-------------------------------------------------------
+
+  var game = new TowerOfHanoi(1);
+  console.log(game.solve());
+  </script>
+</head>
+<body>
+
+</body>
+</html>

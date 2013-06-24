@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+
+  // http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals
+
+  var RomanNumeralConverter = function() {
+    var numerals = {
+      M: 1000,
+      D: 500,
+      C: 100,
+      L: 50,
+      X: 10,
+      V: 5,
+      I: 1
+    }
+
+    var findNumeralByValue = function(value) {
+      var numeral = "";
+      for(n in numerals) {
+        if(numerals[n] == value) {
+          numeral = n;
+          break;
+        }
+      }
+
+      return numeral;
+    }
+
+    return {
+      convertToRomanNumerals: function(input) {
+        var times, remainder;
+        var result = "";
+        var previous = "";
+
+        for(numeral in numerals) {
+          times = Math.floor(input / numerals[numeral]);
+          value = numerals[numeral];
+
+          if(times > 0) {
+            remainder = input % value;
+            if(times % 4 == 0) {
+              result += numeral + previous;
+            } else {
+              result += Array(times + 1).join(numeral);
+            }
+            break;
+          } else if(numeral == 'I' || numeral == 'X' || numeral == 'C') {
+            times = Math.floor(input / (value * 0.1))
+            if(times == 9) {
+              result += findNumeralByValue(value * 0.1) + numeral;
+              remainder = input % (9 * value * 0.1);
+              break;
+            }
+          }
+
+          previous = numeral;
+        }
+
+        if(remainder > 0) {
+          result += this.convertToRomanNumerals(remainder);
+        }
+
+        return result;
+      },
+      convertToInteger: function(input) {
+        var total = 0;
+        var previousValue = null;
+        var subtractIndex = null;
+
+        $(input.split('')).each(function() {
+          var value = numerals[this];
+          if(previousValue != null) {
+            if(previousValue < value) {
+              total += (value - previousValue);
+              value = null;
+            } else {
+              total += previousValue;
+            }
+          }
+
+          previousValue = value;
+        })
+        total += previousValue;
+
+        return total;
+      }
+    }
+  }();
+
+  console.log(RomanNumeralConverter.convertToInteger('XVII'));      // 17
+  console.log(RomanNumeralConverter.convertToInteger('XIV'));       // 14
+  console.log(RomanNumeralConverter.convertToInteger('XCI'));       // 91
+  console.log(RomanNumeralConverter.convertToInteger('CDXLVIII'));  // 448
+  console.log(RomanNumeralConverter.convertToInteger('CCCLXIX'));   // 369
+
+  console.log(RomanNumeralConverter.convertToRomanNumerals(17));
+  console.log(RomanNumeralConverter.convertToRomanNumerals(14));
+  console.log(RomanNumeralConverter.convertToRomanNumerals(91));
+  console.log(RomanNumeralConverter.convertToRomanNumerals(448));
+  console.log(RomanNumeralConverter.convertToRomanNumerals(369));
+  </script>
+</head>
+<body>
+
+</body>
+</html>
