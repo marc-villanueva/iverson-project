@@ -5,7 +5,7 @@ iverson-project
 
 A random collection of javascript solutions, you know, just for practice.
 
-- [Langton's ant](http://en.wikipedia.org/wiki/Langton's_ant)  - [code](example/ant.html)
+- [Langton's ant](http://en.wikipedia.org/wiki/Langton's_ant)  - [code](examples/ant.html)
 - [Unique pairs](http://programmingpraxis.com/2013/05/03/pairing-students/) - [code](examples/pairs.html)
 - [Tower of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi) - [code](example/tower_of_hanoi.html)
 - [Roman Numerals](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) - [code](example/roman.html)
