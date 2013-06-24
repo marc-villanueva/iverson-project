@@ -7,6 +7,6 @@ A random collection of javascript solutions, you know, just for practice.
 
 - [Langton's ant](http://en.wikipedia.org/wiki/Langton's_ant)  - [code](examples/ant.html)
 - [Unique pairs](http://programmingpraxis.com/2013/05/03/pairing-students/) - [code](examples/pairs.html)
-- [Tower of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi) - [code](example/tower_of_hanoi.html)
-- [Roman Numerals](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) - [code](example/roman.html)
-- [Bowling Scoring](https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring) - [code](example/bowling.html)
+- [Tower of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi) - [code](examples/tower_of_hanoi.html)
+- [Roman Numerals](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) - [code](examples/roman.html)
+- [Bowling Scoring](https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring) - [code](examples/bowling.html)
