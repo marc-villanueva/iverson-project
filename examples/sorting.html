@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+
+  //var unsorted = [5, 1, 4, 8, 20];
+  var unsorted = createSet(20, 50);
+
+  function swap(set, index1, index2) {
+    if(index1 != index2) {
+      set[index1] = set[index1] ^ set[index2];
+      set[index2] = set[index1] ^ set[index2];
+      set[index1] = set[index1] ^ set[index2];
+    }
+  }
+
+  function mergeArrays(arr1, arr2) {
+    var merged = [];
+
+    while(arr1.length > 0 || arr2.length > 0) {
+      if(arr1.length > 0 && arr2.length > 0) {
+        if(arr1[0] < arr2[0]) {
+          merged.push(arr1.splice(0,1)[0]);
+        } else {
+          merged.push(arr2.splice(0,1)[0]);
+        }
+      } else if(arr1.length > 0) {
+        merged = merged.concat(arr1.splice(0));
+      } else {
+        merged = merged.concat(arr2.splice(0));
+      }
+    }
+
+    return merged;
+  }
+
+  function random(maxValue) {
+    return Math.floor(Math.random() * maxValue);
+  }
+
+  function createSet(numIntegers, maxValue) {
+    var set = new Array(numIntegers);
+
+    for(var i = 0; i < set.length; i++) {
+      set[i] = random(maxValue);
+    }
+
+    return set;
+  }
+
+  //------------------------
+  //
+  // bubble sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Bubble_sort
+  //
+  //------------------------
+  function bubbleSort(set) {
+    var bubble = set.slice();
+    var sorted = false;
+
+    while(!sorted) {
+      sorted = true;
+      for(var i = 0; i < bubble.length - 1; i++) {
+        if(bubble[i] > bubble[i+1]) {
+          swap(bubble, i, i + 1);
+          sorted = false;
+        }
+      }
+    }
+    return bubble;
+  }
+
+  console.log(bubbleSort(unsorted));
+
+  //------------------------
+  //
+  // selection sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Selection_sort
+  //
+  //------------------------
+  function selectionSort(set) {
+    var selection = set.slice();
+    var marker = 0;
+
+    function findSmallestIndex(set, start) {
+      var smallestIndex = start
+      for(var i = start; i < set.length; i++) {
+        if(set[i] < set[smallestIndex]) {
+          smallestIndex = i;
+        }
+      }
+
+      return smallestIndex;
+    }
+
+    while(marker < selection.length - 1) {
+      var smallestIndex = findSmallestIndex(selection, marker);
+      swap(selection, marker, smallestIndex);
+      marker++;
+    }
+
+    return selection;
+  }
+
+  console.log(selectionSort(unsorted));
+
+  //------------------------
+  //
+  // quick sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Quicksort
+  //
+  //------------------------
+  function quickSort(set) {
+    var quick = set.slice();
+    var less = [];
+    var greater = [];
+    var pivots = [];
+
+    if(quick.length > 1) {
+      var pivot = quick[0];
+      for(var i = 0; i < quick.length; i++) {
+        if(quick[i] < pivot) {
+          less.push(quick[i]);
+        } else if(quick[i] == pivot) {
+          pivots.push(quick[i]);
+        } else {
+          greater.push(quick[i]);
+        }
+      }
+      less = quickSort(less);
+      greater = quickSort(greater);
+      quick = less.concat(pivots).concat(greater);
+    }
+
+    return quick;
+  }
+
+  console.log(quickSort(unsorted));
+
+  //------------------------
+  //
+  // insertion sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Insertion_sort
+  //
+  //------------------------
+  function insertionSort(set) {
+    var insertion = set.slice();
+    var marker = 1;
+
+    function findInsertIndex(set, start) {
+      var index = start;
+
+      for(var i = index - 1; i >= 0; i--) {
+        if(set[start] >= set[i]) {
+          break;
+        }
+        index = i;
+      }
+
+      return index;
+    }
+
+    function insert(set, valueIndex, insertIndex) {
+      set.splice(insertIndex, 0, set[valueIndex]);
+      set.splice(valueIndex + 1,1);
+    }
+
+    while(marker < insertion.length) {
+      var insertIndex = findInsertIndex(insertion, marker)
+      insert(insertion, marker, insertIndex);
+      marker++;
+    }
+
+    return insertion;
+  }
+
+  console.log(insertionSort(unsorted));
+
+  //------------------------
+  //
+  // merge sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Merge_sort
+  //
+  //------------------------
+  function mergeSort(set) {
+    var merge = set.slice();
+    var left, right;
+
+    if(merge.length <= 1) {
+      return merge;
+    } else {
+      left = merge.slice(0, Math.round(merge.length / 2));
+      right = merge.slice(left.length);
+      left = mergeSort(left);
+      right = mergeSort(right);
+
+      merge = mergeArrays(left, right);
+    }
+
+    return merge;
+  }
+
+
+  console.log(mergeSort(unsorted));
+
+  //------------------------
+  //
+  // heap sort
+  //
+  // http://en.wikipedia.org/wiki/Sorting_algorithm#Heapsort
+  //
+  //------------------------
+  function Heap() {
+    this._arr = [];
+  }
+  Heap.prototype = {
+    insert: function(value) {
+      var lastNode = this._arr.length;
+      this._arr.push(value);
+
+      var parentIndex = this.getParentIndex(lastNode);
+      while(parentIndex != null && this._arr[lastNode] > this._arr[parentIndex]) {
+        swap(this._arr, lastNode, parentIndex);
+        lastNode = parentIndex;
+        parentIndex = this.getParentIndex(lastNode);
+      }
+    },
+    getParentIndex: function(index) {
+      if(index == 0) {
+        return null;
+      } else {
+        return Math.floor((index - 1) / 2);
+      }
+    },
+    toArray: function() {
+      return this._arr;
+    }
+  }
+
+  function heapSort(set) {
+    var heapSet = set.slice();
+    var marker = heapSet.length - 1;
+
+    function heapify(set, end) {
+      var heap = new Heap();
+      for(var i = 0; i <= end; i++) {
+        heap.insert(set[i]);
+      }
+
+      return (end == set.length - 1 ? heap.toArray() : heap.toArray().concat(set.splice(end + 1)));
+    }
+
+    while(marker > 0) {
+      heapSet = heapify(heapSet, marker);
+      swap(heapSet, 0, marker);
+      marker--;
+    }
+
+    return heapSet;
+  }
+
+
+  console.log(heapSort(unsorted));
+
+  </script>
+
+</head>
+<body>
+
+</body>
+</html>

@@ -10,3 +10,4 @@ A random collection of javascript solutions, you know, just for practice.
 - [Tower of Hanoi](http://en.wikipedia.org/wiki/Tower_of_Hanoi) - [code](examples/tower_of_hanoi.html)
 - [Roman Numerals](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) - [code](examples/roman.html)
 - [Bowling Scoring](https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring) - [code](examples/bowling.html)
+- [Sorting](http://en.wikipedia.org/wiki/Sorting_algorithm) - [code](examples/sorting.html)
