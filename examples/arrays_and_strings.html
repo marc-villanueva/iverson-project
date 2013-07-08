@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+  //-----------------------------------------------
+  // Implement an algorithm to determine if a string
+  // has all unique characters
+  //-----------------------------------------------
+
+  function hasUniqueChars(input) {
+    var isUnique = true;
+    var chars = {};                           // keep track of chars seen
+    var modInput = input.replace(/\s/g, '');  // remove whitespace
+
+    for(var i = 0; i < modInput.length; i++) {
+      var c = modInput.charAt(i);
+      if(chars[c]) {
+        isUnique = false;
+        break;
+      } else {
+        chars[c] = true;
+      }
+    }
+
+    return isUnique;
+  }
+
+  console.log(hasUniqueChars("the quick fox"));
+  console.log(hasUniqueChars("brass monkey"));
+
+  //-----------------------------------------------
+  // Design an algorithm and write code to remove the
+  // duplicate characters in a string without using any
+  // additional buffer
+  //-----------------------------------------------
+
+  function removeDupes(input) {
+    var charsToRemove = [];
+    var inputArray = input.split("");
+
+    for(var i = 0; i < input.length; i++) {
+      var c = input.charAt(i);
+
+      if(c == " ") continue;
+
+      var index = input.indexOf(c, i + 1);
+      while(index != -1) {
+        charsToRemove.push(index);
+        index = input.indexOf(c, index + 1);
+      }
+    }
+
+    for(var i = 0; i < charsToRemove.length; i++) {
+      inputArray[charsToRemove[i]] = null;
+    }
+
+    return inputArray.filter(function(n) { return n;}).join("");
+  }
+
+  console.log(removeDupes("brass monkey"));
+  console.log(removeDupes("for whom the bell tolls"));
+
+  //-----------------------------------------------
+  // Write a method to decide if two strings are anagrams or not
+  //-----------------------------------------------
+
+  function isAnagram(input1, input2) {
+    var sort1 = input1.split("").sort();
+    var sort2 = input2.split("").sort();
+    return sort1.toString() == sort2.toString();
+  }
+
+  function isAnagram2(input1, input2) {
+    var isAnagram = false;
+
+    if(input1.length == input2.length) {
+      var input2Array = input2.split("");
+      for(var i = 0; i < input1.length; i++) {
+        var c = input1.charAt(i);
+        var index = input2Array.indexOf(c);
+        if(index != -1) {
+          input2Array.splice(index, 1);
+        }
+      }
+
+      isAnagram = input2Array.length == 0;
+    }
+
+    return isAnagram;
+  }
+
+  console.log(isAnagram("tire", "tier") && isAnagram2("tire", "tier"));
+  console.log(isAnagram("tire", "tree") && isAnagram2("tire", "tree"));
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>

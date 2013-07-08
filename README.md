@@ -11,3 +11,4 @@ A random collection of javascript solutions, you know, just for practice.
 - [Roman Numerals](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) - [code](examples/roman.html)
 - [Bowling Scoring](https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring) - [code](examples/bowling.html)
 - [Sorting](http://en.wikipedia.org/wiki/Sorting_algorithm) - [code](examples/sorting.html)
+- [Cracking the Coding Interview exercises #1](http://www.crackingthecodinginterview.com/) - [code](examples/arrays_and_strings.html)
