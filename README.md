@@ -12,3 +12,4 @@ A random collection of javascript solutions, you know, just for practice.
 - [Bowling Scoring](https://en.wikipedia.org/wiki/Ten-pin_bowling#Scoring) - [code](examples/bowling.html)
 - [Sorting](http://en.wikipedia.org/wiki/Sorting_algorithm) - [code](examples/sorting.html)
 - [Cracking the Coding Interview exercises #1](http://www.crackingthecodinginterview.com/) - [code](examples/arrays_and_strings.html)
+- [Overly complex FizzBuzz ie. FizzBuzz from a Java Dev's perspective](http://en.wikipedia.org/wiki/Fizz_buzz) - [code](examples/fizz_buzz.html)

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="../lib/jquery-2.0.1.js"></script>
+  <script type="text/javascript">
+  /**
+   * FizzBuzzer
+   *
+   * Main FizzBuzz class that will iterate through a number range and output
+   * terms to the output stream when certain conditions are met.
+   *
+   * @param parser
+   * @param handler
+   */
+  function FizzBuzzer(parser, handler) {
+    this._parser = parser;
+    this._handler = handler;
+  }
+  FizzBuzzer.prototype = {
+    go: function(start, end) {
+      this._parser.run(start, end, this.getHandler());
+    },
+    getParser: function() {
+      return this._parser;
+    },
+    setParser: function(parser) {
+      this._parser = parser;
+    },
+    getHandler: function() {
+      return this._handler;
+    },
+    setHandler: function(handler) {
+      this._handler = handler;
+    }
+  }
+  /**
+   * static factory to create FizzBuzzer with default parser and handler
+   */
+  FizzBuzzer.create = function() {
+    var obj = new FizzBuzzer(new FizzBuzzParser(), new FizzBuzzHandler(new ConsoleWriter()));
+    return obj;
+  }
+
+  /**
+   * FizzBuzzParser
+   *
+   * Class that iterates through a range of numbers and
+   * fires off events to a handler when the different FizzBuzz
+   * conditions are met.
+   *
+   */
+  function FizzBuzzParser() {
+  }
+  FizzBuzzParser.prototype = {
+    run: function(start, end, handler) {
+      for(var i = start; i <= end; i++) {
+        if(i % 15 == 0) {
+          handler.fizzBuzz(i);
+        } else if(i % 3 == 0) {
+          handler.fizz(i);
+        } else if(i % 5 == 0) {
+          handler.buzz(i)
+        } else {
+          handler.default(i);
+        }
+      }
+    }
+  }
+
+  /**
+   * FizzBuzzHandler
+   *
+   * Handler class to be passed to a FizzBuzzParser.  Outputs
+   * FizzBuzz, Fizz, and Buzz.
+   *
+   * @param writer
+   *
+   */
+  function FizzBuzzHandler(writer) {
+    this._writer = writer;
+  }
+  FizzBuzzHandler.prototype = {
+    fizzBuzz: function(num) {
+      this.getWriter().write("FizzBuzz");
+    },
+    fizz: function(num) {
+      this.getWriter().write("Fizz");
+    },
+    buzz: function(num) {
+      this.getWriter().write("Buzz");
+    },
+    default: function(num) {
+      this.getWriter().write(num);
+    },
+    getWriter: function() {
+      return this._writer;
+    }
+  }
+
+   /**
+   * FizzyBuzzyHandler
+   *
+   * Handler class to be passed to a FizzBuzzParser.  Outputs
+   * FizzyBuzzy, Fizzy, and Buzzy.
+   *
+   * @param writer
+   *
+   */
+  function FizzyBuzzyHandler(writer) {
+    this._writer = writer;
+  }
+  FizzyBuzzyHandler.prototype = {
+    fizzBuzz: function(num) {
+      this.getWriter().write("FizzyBuzzy");
+    },
+    fizz: function(num) {
+      this.getWriter().write("Fizzy");
+    },
+    buzz: function(num) {
+      this.getWriter().write("Buzzy");
+    },
+    default: function(num) {
+      this.getWriter().write(num);
+    },
+    getWriter: function() {
+      return this._writer;
+    }
+  }
+
+   /**
+   * ConsoleWriter
+   *
+   * Class that will output to the brower console.
+   *
+   */
+  function ConsoleWriter() {
+  }
+  ConsoleWriter.prototype = {
+    write: function(output) {
+      this.getConsole().log(output);
+    },
+    getConsole: function() {
+      return console;
+    }
+  }
+
+   /**
+   * DocumentWriter
+   *
+   * Class that will write output to the DOM document.
+   *
+   */
+  function DocumentWriter() {
+  }
+  DocumentWriter.prototype = {
+    write: function(output) {
+      this.getDocument().write(output + "<br/>");
+    },
+    getDocument: function() {
+      return window.document;
+    }
+  }
+
+  /**
+   *  MAIN
+   */
+  $(function() {
+    // use default FizzBuzzer which will write FizzBuzz to the console
+    var fizzBuzz = FizzBuzzer.create();
+    fizzBuzz.go(1, 20);
+
+    // let's write to the document now
+    fizzBuzz.setHandler(new FizzBuzzHandler(new DocumentWriter()));
+    fizzBuzz.go(1, 20);
+
+    // we want FizzyBuzzy instead of the standard FizzBuzz
+    fizzBuzz.setHandler(new FizzyBuzzyHandler(new ConsoleWriter()));
+    fizzBuzz.go(1, 20);
+
+    // FizzyBuzzy to the document
+    fizzBuzz.setHandler(new FizzyBuzzyHandler(new DocumentWriter()));
+    fizzBuzz.go(1, 20);
+  })
+
+  </script>
+</head>
+
+<body>
+
+</body>
+</html>
