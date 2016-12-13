@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+
+  var VignereCipher = function() {
+    var UPPER_CASE_A_ASCII_CODE = 65;
+    var LOWER_CASE_A_ASCII_CODE = 97;
+
+    function isAlpha(letter) {
+        return letter.match(/[a-z]/i);
+    }
+
+    function isUpperCase(letter) {
+        return letter == letter.toUpperCase();
+    }
+
+    function getAlphabetNumber(letter) {
+      return letter.toLowerCase().charCodeAt() - LOWER_CASE_A_ASCII_CODE;
+    }
+
+    function getKeyLetter(key, keyCounter) {
+      return key[keyCounter % key.length];
+    }
+
+    function encode(row, column, isUpperCase) {
+        var asciiOffset = isUpperCase ? UPPER_CASE_A_ASCII_CODE : LOWER_CASE_A_ASCII_CODE;
+        var total = row + column;
+        return String.fromCharCode((total % 26) + asciiOffset);
+    }
+
+    function decode(row, columnValue, isUpperCase) {
+        var asciiOffset = isUpperCase ? UPPER_CASE_A_ASCII_CODE : LOWER_CASE_A_ASCII_CODE;
+        var total = columnValue + (26 - row);
+        return String.fromCharCode((total % 26) + asciiOffset);
+    }
+
+    return {
+      encipher: function (key, text) {
+        var cipherText = [];
+        var keyCounter = 0;
+
+        for(var i = 0; i < text.length; i++) {
+          var letter = text[i];
+
+          if(isAlpha(letter)) {
+            var alphabetNumberForLetter = getAlphabetNumber(letter);
+
+            var keyLetter = getKeyLetter(key, keyCounter);
+            var alphabetNumberForKeyLetter = getAlphabetNumber(keyLetter);
+
+            var encodedLetter = encode(alphabetNumberForKeyLetter, alphabetNumberForLetter, isUpperCase(letter));
+
+            cipherText.push(encodedLetter);
+            keyCounter++;
+
+          } else {
+            cipherText.push(letter);
+          }
+
+        }
+
+        return cipherText.join('');
+      },
+
+      decipher: function(key, text) {
+        var cipherText = [];
+        var keyCounter = 0;
+
+        for(var i = 0; i < text.length; i++) {
+          var letter = text[i];
+
+          if(isAlpha(letter)) {
+            var alphabetNumberForLetter = getAlphabetNumber(letter);
+
+            var keyLetter = getKeyLetter(key, keyCounter);
+            var alphabetNumberForKeyLetter = getAlphabetNumber(keyLetter);
+
+            var encodedLetter = decode(alphabetNumberForKeyLetter, alphabetNumberForLetter, isUpperCase(letter));
+
+            cipherText.push(encodedLetter);
+            keyCounter++;
+
+          } else {
+            cipherText.push(letter);
+          }
+
+        }
+
+        return cipherText.join('');
+      }
+    };
+  }();
+
+  //-------------------------------------------------------
+
+  var testCases = [
+    {key: 'baz', message: 'world, say hello!', cipher: 'xoqmd, rby gflkp!'},
+    {key: 'BaZ', message: 'BaRFoo', cipher: 'CaQGon'},
+    {key: 'BAZ', message: 'BARFOO', cipher: 'CAQGON'}
+  ];
+
+  console.log('encrypting');
+
+  for(var i = 0; i < testCases.length; i++) {
+    var test = testCases[i];
+    var cipherText = VignereCipher.encipher(test.key, test.message);
+    console.log('expected: ' + test.cipher);
+    console.log('actual: ' + cipherText);
+  }
+
+  console.log('');
+  console.log('decrypting');
+
+  for(var i = 0; i < testCases.length; i++) {
+    var test = testCases[i];
+    var decipherText = VignereCipher.decipher(test.key, test.cipher);
+    console.log('expected: ' + test.message);
+    console.log('actual: ' + decipherText);
+  }
+  </script>
+</head>
+<body>
+
+</body>
+</html>

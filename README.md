@@ -13,3 +13,4 @@ A random collection of javascript solutions, you know, just for practice.
 - [Sorting](http://en.wikipedia.org/wiki/Sorting_algorithm) - [code](examples/sorting.html)
 - [Cracking the Coding Interview exercises #1](http://www.crackingthecodinginterview.com/) - [code](examples/arrays_and_strings.html)
 - [Overly complex FizzBuzz ie. FizzBuzz from a Java Dev's perspective](http://en.wikipedia.org/wiki/Fizz_buzz) - [code](examples/fizz_buzz.html)
+- [Vigenere Cipher](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher) - [code](examples/vigenere_cipher.html)
